@@ -104,6 +104,8 @@ BmpError bmp_read_file(Bitmap *bmp, const char *filename);
 
 BmpError bmp_write_file(Bitmap *bmp, const char *filename);
 
+BmpError bmp_get_pixel(Bitmap *bmp, int32_t x, int32_t y, uint8_t *r, uint8_t *g, uint8_t *b);
+
 BmpError bmp_set_pixel(Bitmap *bmp, int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b);
 
 BmpError bmp_fill(Bitmap *bmp, uint8_t r, uint8_t g, uint8_t b);

@@ -224,6 +224,27 @@ BmpError bmp_write_file(Bitmap *bmp, const char *filename) {
     return BMP_OK;
 }
 
+BmpError bmp_get_pixel(Bitmap *bmp, int32_t x, int32_t y, uint8_t *r, uint8_t *g, uint8_t *b) {
+    if (bmp == NULL) { return BMP_NULL_PTR; }
+    if (bmp->data == NULL) { return BMP_NULL_PTR; }
+    if (x < 0 || x >= bmp->info_header.bi_width) { return BMP_OUT_OF_RANGE; }
+    if (y < 0 || y >= bmp->info_header.bi_height) { return BMP_OUT_OF_RANGE; }
+    if (bmp->info_header.bi_bit_count != 24 && bmp->info_header.bi_bit_count != 32) {
+        return BMP_INVALID_BIT_COUNT;
+    }
+
+    size_t pixel_size = bmp->info_header.bi_bit_count / 8;
+    size_t row_size = bmp->info_header.bi_width * pixel_size;
+
+    uint8_t *pixel = bmp->data + (row_size * y) + (pixel_size * x);
+
+    *b = pixel[0];
+    *g = pixel[1];
+    *r = pixel[2];
+
+    return BMP_OK;
+}
+
 BmpError bmp_set_pixel(Bitmap *bmp, int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b) {
     if (bmp == NULL) { return BMP_NULL_PTR; }
     if (bmp->data == NULL) { return BMP_NULL_PTR; }
