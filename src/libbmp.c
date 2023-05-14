@@ -88,24 +88,30 @@ BmpError bmp_free(Bitmap *bmp) {
 }
 
 BmpError bmp_print_header(Bitmap *bmp) {
-    printf("<Bitmap header>\n");
-    printf("| Type: %c%c\n", bmp->file_header.bf_type & 0xFF, bmp->file_header.bf_type >> 8);
-    printf("| File size: %d\n", bmp->file_header.bf_size);
-    printf("| Data offset: %d\n", bmp->file_header.bf_off_bits);
+    BmpFileHeader *fH = &bmp->file_header;
+    BmpInfoHeader *iH = &bmp->info_header;
 
-    printf("\n<Bitmap info header>\n");
-    printf("| Header size: %d\n", bmp->info_header.bi_size);
-    printf("| Width: %d\n", bmp->info_header.bi_width);
-    printf("| Height: %d\n", bmp->info_header.bi_height);
-    printf("| Planes: %d\n", bmp->info_header.bi_planes);
-    printf("| Bit count: %d\n", bmp->info_header.bi_bit_count);
-    printf("| Compression: %d\n", bmp->info_header.bi_compression);
-    printf("| Image size: %d\n", bmp->info_header.bi_size_image);
-    printf("| X pixels per meter: %d\n", bmp->info_header.bi_x_pels_per_meter);
-    printf("| Y pixels per meter: %d\n", bmp->info_header.bi_y_pels_per_meter);
-    printf("| Color used: %d\n", bmp->info_header.bi_clr_used);
-    printf("| Color important: %d\n", bmp->info_header.bi_clr_important);
-
+    printf("+--------------------------------+\n");
+    printf("|          Bitmap header         |\n");
+    printf("+--------------------------------+\n");
+    printf("| Type:        %16c%c |\n", fH->bf_type & 0xFF, fH->bf_type >> 8);
+    printf("| File size:   %15d B |\n", fH->bf_size);
+    printf("| Data offset: %15d B |\n", fH->bf_off_bits);
+    printf("+--------------------------------+\n");
+    printf("|       Bitmap info header       |\n");
+    printf("+--------------------------------+\n");
+    printf("| Header size:    %12d B |\n", iH->bi_size);
+    printf("| Width:         %12d px |\n", iH->bi_width);
+    printf("| Height:        %12d px |\n", iH->bi_height);
+    printf("| Planes:           %12d |\n", iH->bi_planes);
+    printf("| Bit count:        %12d |\n", iH->bi_bit_count);
+    printf("| Compression mode: %12d |\n", iH->bi_compression);
+    printf("| Image size:     %12d B |\n", iH->bi_size_image);
+    printf("| X pixels/meter:   %12d |\n", iH->bi_x_pels_per_meter);
+    printf("| Y pixels/meter:   %12d |\n", iH->bi_y_pels_per_meter);
+    printf("| Color used:       %12d |\n", iH->bi_clr_used);
+    printf("| Color important:  %12d |\n", iH->bi_clr_important);
+    printf("+--------------------------------+\n");
     return BMP_OK;
 }
 
