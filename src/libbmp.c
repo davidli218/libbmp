@@ -57,13 +57,8 @@ BmpError bmp_new(Bitmap *bmp, int32_t width, int32_t height, uint16_t bit_count)
 }
 
 BmpError bmp_free(Bitmap *bmp) {
-    if (bmp->color_table != NULL) {
-        free(bmp->color_table);
-    }
-
-    if (bmp->data != NULL) {
-        free(bmp->data);
-    }
+    if (bmp->color_table != NULL) { free(bmp->color_table); }
+    if (bmp->data != NULL) { free(bmp->data); }
 
     return BMP_OK;
 }
