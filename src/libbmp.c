@@ -199,7 +199,7 @@ BmpError bmp_get_pixel(Bitmap *bmp, int32_t x, int32_t y, uint8_t *r, uint8_t *g
     size_t pixel_size = bmp->info_header.bi_bit_count / 8;
     size_t row_size = bmp->info_header.bi_width * pixel_size;
 
-    uint8_t *pixel = bmp->data + (row_size * y) + (pixel_size * x);
+    uint8_t *pixel = bmp->data + (bmp->info_header.bi_height - y - 1) * row_size + x * pixel_size;
 
     *b = pixel[0];
     *g = pixel[1];
