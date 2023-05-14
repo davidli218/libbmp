@@ -1,5 +1,6 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "libbmp.h"
 
@@ -31,19 +32,15 @@ static void bmp_init(Bitmap *bmp) {
 }
 
 BmpError bmp_new(Bitmap *bmp, int32_t width, int32_t height, uint16_t bit_count) {
-    if (bit_count != 24 && bit_count != 32) {
-        return BMP_INVALID_BIT_COUNT;
-    }
+    if (bit_count != 24 && bit_count != 32) { return BMP_INVALID_BIT_COUNT; }
 
     bmp_init(bmp);
 
-    /* Set rest of the fields in info header */
+    /* Set rest of the fields in headers */
     bmp->info_header.bi_width = width;
     bmp->info_header.bi_height = height;
     bmp->info_header.bi_bit_count = bit_count;
     bmp->info_header.bi_size_image = width * height * (bit_count / 8);
-
-    /* Set rest of the fields in file header */
     bmp->file_header.bf_size = bmp->info_header.bi_size_image + bmp->file_header.bf_off_bits;
 
     /* Allocate memory for color table */
@@ -51,26 +48,10 @@ BmpError bmp_new(Bitmap *bmp, int32_t width, int32_t height, uint16_t bit_count)
 
     /* Allocate memory for image data */
     bmp->data = (uint8_t *) malloc(bmp->info_header.bi_size_image);
-
     if (bmp->data == NULL) { return BMP_OUT_OF_MEMORY; }
 
-    /* Initialize image data to white */
-    if (bit_count == 24) {
-        for (int i = 0; i < bmp->info_header.bi_size_image; i += 3) {
-            bmp->data[i] = 0xFF;
-            bmp->data[i + 1] = 0xFF;
-            bmp->data[i + 2] = 0xFF;
-        }
-    } else if (bit_count == 32) {
-        for (int i = 0; i < bmp->info_header.bi_size_image; i += 4) {
-            bmp->data[i] = 0xFF;
-            bmp->data[i + 1] = 0xFF;
-            bmp->data[i + 2] = 0xFF;
-            bmp->data[i + 3] = 0xFF;
-        }
-    } else {
-        return UNKNOWN_ERROR;
-    }
+    /* Initialize image data to pure white */
+    memset(bmp->data, 0xFF, bmp->info_header.bi_size_image);
 
     return BMP_OK;
 }

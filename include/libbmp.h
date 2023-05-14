@@ -11,7 +11,6 @@ typedef enum tagBmpError {
     BMP_OUT_OF_RANGE,
     BMP_INVALID_BIT_COUNT,
     BMP_NULL_PTR,
-    UNKNOWN_ERROR,
 } BmpError;
 
 typedef struct tagBmpFileHeader {
