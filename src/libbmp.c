@@ -157,7 +157,7 @@ BmpError bmp_read_file(Bitmap *bmp, const char *filename) {
     size_t color_table_size = bmp->file_header.bf_off_bits - bmp->info_header.bi_size - 14;
 
     if (color_table_size > 0) {
-        bmp->color_table = (RgbQuad *) malloc(color_table_size);
+        bmp->color_table = (BmpRgbQuad *) malloc(color_table_size);
         if (bmp->color_table == NULL) { return BMP_OUT_OF_MEMORY; }
         fread(bmp->color_table, color_table_size, 1, fp);
     } else {

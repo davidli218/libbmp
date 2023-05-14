@@ -3,7 +3,18 @@
 
 #include <stdint.h>
 
-typedef struct tagBitmapFileHeader {
+typedef enum tagBmpError {
+    BMP_OK,
+    BMP_FILE_NOT_FOUND,
+    BMP_FILE_INVALID,
+    BMP_OUT_OF_MEMORY,
+    BMP_OUT_OF_RANGE,
+    BMP_INVALID_BIT_COUNT,
+    BMP_NULL_PTR,
+    UNKNOWN_ERROR,
+} BmpError;
+
+typedef struct tagBmpFileHeader {
     /* The header field used to identify the BMP & DIB file
      * is 0x42 0x4D in hexadecimal, same as BM in ASCII. */
     uint16_t bf_type;
@@ -17,9 +28,9 @@ typedef struct tagBitmapFileHeader {
 
     /* Offset to the start of image data in bytes from the beginning of the file */
     uint32_t bf_off_bits;
-} BitmapFileHeader;
+} BmpFileHeader;
 
-typedef struct tagBitmapInfoHeader {
+typedef struct tagBmpInfoHeader {
     /* Size of this header in bytes */
     uint32_t bi_size;
 
@@ -53,9 +64,9 @@ typedef struct tagBitmapInfoHeader {
     /* Number of color indexes that are important.
      * When this value is set to zero, all colors are important. */
     uint32_t bi_clr_important;
-} BitmapInfoHeader;
+} BmpInfoHeader;
 
-typedef struct tagRgbQuad {
+typedef struct tagBmpRgbQuad {
     /* Blue value of color */
     uint8_t rgb_blue;
 
@@ -67,32 +78,21 @@ typedef struct tagRgbQuad {
 
     /* Reserved should be 0 */
     uint8_t rgb_reserved;
-} RgbQuad;
+} BmpRgbQuad;
 
 typedef struct tagBitmap {
     /* File header */
-    BitmapFileHeader file_header;
+    BmpFileHeader file_header;
 
     /* Info header */
-    BitmapInfoHeader info_header;
+    BmpInfoHeader info_header;
 
     /* Color table */
-    RgbQuad *color_table;
+    BmpRgbQuad *color_table;
 
     /* Image data */
     uint8_t *data;
 } Bitmap;
-
-typedef enum tagBmpError {
-    BMP_OK,
-    BMP_FILE_NOT_FOUND,
-    BMP_FILE_INVALID,
-    BMP_OUT_OF_MEMORY,
-    BMP_OUT_OF_RANGE,
-    BMP_INVALID_BIT_COUNT,
-    BMP_NULL_PTR,
-    UNKNOWN_ERROR,
-} BmpError;
 
 Bitmap *bmp_new(int32_t width, int32_t height, uint16_t bit_count);
 
