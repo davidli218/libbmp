@@ -245,8 +245,7 @@ BmpError bmp_fill(Bitmap *bmp, uint8_t r, uint8_t g, uint8_t b) {
 
     for (int i = 0; i < bmp->info_header.bi_height; ++i) {
         for (int j = 0; j < bmp->info_header.bi_width; ++j) {
-            uint8_t *pixel =
-                    bmp->data + (bmp->info_header.bi_height - i - 1) * row_size + j * pixel_size;
+            uint8_t *pixel = bmp->data + i * row_size + j * pixel_size;
             pixel[0] = b;
             pixel[1] = g;
             pixel[2] = r;
