@@ -96,18 +96,17 @@ BmpError bmp_read_file(Bitmap *bmp, const char *filename) {
 
     if (fp == NULL) { return BMP_FILE_NOT_FOUND; }
 
-    /* Read file header */
     fread(&bmp->file_header.bf_type, sizeof(uint16_t), 1, fp);
     if (bmp->file_header.bf_type != 0x4D42) {
         fclose(fp);
         return BMP_FILE_INVALID;
     }
+
+    /* Read file header */
     fread(&bmp->file_header.bf_size, sizeof(uint32_t), 1, fp);
     fread(&bmp->file_header.bf_reserved1, sizeof(uint16_t), 1, fp);
     fread(&bmp->file_header.bf_reserved2, sizeof(uint16_t), 1, fp);
     fread(&bmp->file_header.bf_off_bits, sizeof(uint32_t), 1, fp);
-
-    /* Read info header */
     fread(&bmp->info_header.bi_size, sizeof(uint32_t), 1, fp);
     fread(&bmp->info_header.bi_width, sizeof(int32_t), 1, fp);
     fread(&bmp->info_header.bi_height, sizeof(int32_t), 1, fp);
@@ -120,26 +119,23 @@ BmpError bmp_read_file(Bitmap *bmp, const char *filename) {
     fread(&bmp->info_header.bi_clr_used, sizeof(uint32_t), 1, fp);
     fread(&bmp->info_header.bi_clr_important, sizeof(uint32_t), 1, fp);
 
-    /* Read color table */
     size_t color_table_size = bmp->file_header.bf_off_bits - bmp->info_header.bi_size - 14;
+    size_t data_size = bmp->file_header.bf_size - bmp->file_header.bf_off_bits;
 
+    /* Read color table */
+    bmp->color_table = NULL;
     if (color_table_size > 0) {
         bmp->color_table = (BmpRgbQuad *) malloc(color_table_size);
         if (bmp->color_table == NULL) { return BMP_OUT_OF_MEMORY; }
         fread(bmp->color_table, color_table_size, 1, fp);
-    } else {
-        bmp->color_table = NULL;
     }
 
     /* Read data */
-    size_t data_size = bmp->file_header.bf_size - bmp->file_header.bf_off_bits;
-
+    bmp->data = NULL;
     if (data_size > 0) {
         bmp->data = (uint8_t *) malloc(data_size);
         if (bmp->data == NULL) { return BMP_OUT_OF_MEMORY; }
         fread(bmp->data, data_size, 1, fp);
-    } else {
-        bmp->data = NULL;
     }
 
     /* Cleanup */
