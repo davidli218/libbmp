@@ -94,7 +94,7 @@ typedef struct tagBitmap {
     uint8_t *data;
 } Bitmap;
 
-Bitmap *bmp_new(int32_t width, int32_t height, uint16_t bit_count);
+BmpError bmp_new(Bitmap *bmp, int32_t width, int32_t height, uint16_t bit_count);
 
 BmpError bmp_free(Bitmap *bmp);
 

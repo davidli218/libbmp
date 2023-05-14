@@ -30,7 +30,7 @@ static void bmp_init(Bitmap *bmp) {
     bmp->data = NULL;
 }
 
-static BmpError bmp_create(Bitmap *bmp, int32_t width, int32_t height, uint16_t bit_count) {
+BmpError bmp_new(Bitmap *bmp, int32_t width, int32_t height, uint16_t bit_count) {
     if (bit_count != 24 && bit_count != 32) {
         return BMP_INVALID_BIT_COUNT;
     }
@@ -73,21 +73,6 @@ static BmpError bmp_create(Bitmap *bmp, int32_t width, int32_t height, uint16_t 
     }
 
     return BMP_OK;
-}
-
-Bitmap *bmp_new(int32_t width, int32_t height, uint16_t bit_count) {
-    Bitmap *bmp = (Bitmap *) malloc(sizeof(Bitmap));
-
-    if (bmp == NULL) { return NULL; }
-
-    BmpError error = bmp_create(bmp, width, height, bit_count);
-
-    if (error != BMP_OK) {
-        free(bmp);
-        return NULL;
-    }
-
-    return bmp;
 }
 
 BmpError bmp_free(Bitmap *bmp) {
