@@ -8,8 +8,6 @@ static void bmp_init(Bitmap *bmp) {
     bmp->file_header.bf_reserved1 = 0;
     bmp->file_header.bf_reserved2 = 0;
     bmp->file_header.bf_off_bits = 40 + 14;
-    /* bmp->file_header.bf_size
-     * will be set later */
 
     bmp->info_header.bi_size = 40;
     bmp->info_header.bi_planes = 1;
@@ -18,11 +16,15 @@ static void bmp_init(Bitmap *bmp) {
     bmp->info_header.bi_y_pels_per_meter = 0;
     bmp->info_header.bi_clr_used = 0;
     bmp->info_header.bi_clr_important = 0;
-    /* bmp->info_header.bi_width
-     * bmp->info_header.bi_height
-     * bmp->info_header.bi_bit_count
-     * bmp->info_header.bi_size_image
-     * will be set later */
+
+    /*
+     * These field will be set in bmp_create():
+     *     + bmp->file_header.bf_size
+     *     + bmp->info_header.bi_width
+     *     + bmp->info_header.bi_height
+     *     + bmp->info_header.bi_bit_count
+     *     + bmp->info_header.bi_size_image
+     */
 
     bmp->color_table = NULL;
     bmp->data = NULL;
