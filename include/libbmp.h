@@ -11,7 +11,13 @@ typedef enum tagBmpError {
     BMP_OUT_OF_RANGE,
     BMP_INVALID_BIT_COUNT,
     BMP_NULL_PTR,
+    BMP_INVALID_ARGUMENT,
 } BmpError;
+
+typedef enum tagFlipDirection {
+    BMP_FLIP_HORIZONTAL,
+    BMP_FLIP_VERTICAL,
+} FlipDirection;
 
 typedef struct tagBmpFileHeader {
     /* The header field used to identify the BMP & DIB file
@@ -93,6 +99,8 @@ typedef struct tagBitmap {
     uint8_t *data;
 } Bitmap;
 
+/* Basic */
+
 BmpError bmp_new(Bitmap *bmp, int32_t width, int32_t height, uint16_t bit_count);
 
 BmpError bmp_free(Bitmap *bmp);
@@ -108,5 +116,9 @@ BmpError bmp_get_pixel(Bitmap *bmp, int32_t x, int32_t y, uint8_t *r, uint8_t *g
 BmpError bmp_set_pixel(Bitmap *bmp, int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b);
 
 BmpError bmp_fill(Bitmap *bmp, uint8_t r, uint8_t g, uint8_t b);
+
+/* Transformations */
+
+BmpError bmp_flip(Bitmap *bmp, FlipDirection mode);
 
 #endif //LIBBMP_LIBRARY_H
