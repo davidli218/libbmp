@@ -273,3 +273,16 @@ Bitmap *bmp_x_create(int32_t width, int32_t height, uint16_t bit_count) {
 
     return bmp;
 }
+
+Bitmap *bmp_x_read_file(const char *filename) {
+    Bitmap *bmp = (Bitmap *) malloc(sizeof(Bitmap));
+
+    if (bmp == NULL) { return NULL; }
+
+    if (bmp_read_file(bmp, filename) != BMP_OK) {
+        free(bmp);
+        return NULL;
+    }
+
+    return bmp;
+}

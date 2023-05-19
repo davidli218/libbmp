@@ -101,6 +101,8 @@ BmpError bmp_fill(Bitmap *bmp, uint8_t r, uint8_t g, uint8_t b);
 
 Bitmap *bmp_x_create(int32_t width, int32_t height, uint16_t bit_count);
 
+Bitmap *bmp_x_read_file(const char *filename);
+
 /* Transformations */
 
 BmpError bmp_flip(Bitmap *bmp, FlipDirection direction);
