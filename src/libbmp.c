@@ -4,7 +4,7 @@
 
 #include "libbmp.h"
 
-static void bmp_init(Bitmap *bmp) {
+static void bmp_init_headers(Bitmap *bmp) {
     bmp->file_header.bf_type = 0x4D42;
     bmp->file_header.bf_reserved1 = 0;
     bmp->file_header.bf_reserved2 = 0;
@@ -19,7 +19,7 @@ static void bmp_init(Bitmap *bmp) {
     bmp->info_header.bi_clr_important = 0;
 
     /*
-     * These field will be set in bmp_create():
+     * These field will be set in bmp_init():
      *     + bmp->file_header.bf_size
      *     + bmp->info_header.bi_width
      *     + bmp->info_header.bi_height
@@ -31,16 +31,18 @@ static void bmp_init(Bitmap *bmp) {
     bmp->data = NULL;
 }
 
-BmpError bmp_new(Bitmap *bmp, int32_t width, int32_t height, uint16_t bit_count) {
-    if (bit_count != 24 && bit_count != 32) { return BMP_INVALID_BIT_COUNT; }
+BmpError bmp_init(Bitmap *bmp, int32_t width, int32_t height, uint16_t bit_count) {
+    if (bmp == NULL) { return BMP_NULL_PTR; }
+    if (height == 0 || width == 0) { return BMP_INVALID_INIT_PARAM; }
+    if (bit_count != 24 && bit_count != 32) { return BMP_INVALID_INIT_PARAM; }
 
-    bmp_init(bmp);
+    bmp_init_headers(bmp);
 
     /* Set rest of the fields in headers */
     bmp->info_header.bi_width = width;
     bmp->info_header.bi_height = height;
     bmp->info_header.bi_bit_count = bit_count;
-    bmp->info_header.bi_size_image = width * height * (bit_count / 8);
+    bmp->info_header.bi_size_image = width * height * (bit_count >> 3);
     bmp->file_header.bf_size = bmp->info_header.bi_size_image + bmp->file_header.bf_off_bits;
 
     /* Allocate memory for color table */
@@ -57,6 +59,7 @@ BmpError bmp_new(Bitmap *bmp, int32_t width, int32_t height, uint16_t bit_count)
 }
 
 BmpError bmp_free(Bitmap *bmp) {
+    if (bmp == NULL) { return BMP_NULL_PTR; }
     if (bmp->color_table != NULL) { free(bmp->color_table); }
     if (bmp->data != NULL) { free(bmp->data); }
 
@@ -193,7 +196,7 @@ BmpError bmp_get_pixel(Bitmap *bmp, int32_t x, int32_t y, uint8_t *r, uint8_t *g
     if (x < 0 || x >= bmp->info_header.bi_width) { return BMP_OUT_OF_RANGE; }
     if (y < 0 || y >= bmp->info_header.bi_height) { return BMP_OUT_OF_RANGE; }
     if (bmp->info_header.bi_bit_count != 24 && bmp->info_header.bi_bit_count != 32) {
-        return BMP_INVALID_BIT_COUNT;
+        return BMP_INVALID_INIT_PARAM;
     }
 
     size_t pixel_size = bmp->info_header.bi_bit_count / 8;
@@ -214,7 +217,7 @@ BmpError bmp_set_pixel(Bitmap *bmp, int32_t x, int32_t y, uint8_t r, uint8_t g, 
     if (x < 0 || x >= bmp->info_header.bi_width) { return BMP_OUT_OF_RANGE; }
     if (y < 0 || y >= bmp->info_header.bi_height) { return BMP_OUT_OF_RANGE; }
     if (bmp->info_header.bi_bit_count != 24 && bmp->info_header.bi_bit_count != 32) {
-        return BMP_INVALID_BIT_COUNT;
+        return BMP_INVALID_INIT_PARAM;
     }
 
     size_t pixel_size = bmp->info_header.bi_bit_count / 8;
@@ -237,7 +240,7 @@ BmpError bmp_fill(Bitmap *bmp, uint8_t r, uint8_t g, uint8_t b) {
     if (bmp == NULL) { return BMP_NULL_PTR; }
     if (bmp->data == NULL) { return BMP_NULL_PTR; }
     if (bmp->info_header.bi_bit_count != 24 && bmp->info_header.bi_bit_count != 32) {
-        return BMP_INVALID_BIT_COUNT;
+        return BMP_INVALID_INIT_PARAM;
     }
 
     size_t pixel_size = bmp->info_header.bi_bit_count / 8;
@@ -256,4 +259,17 @@ BmpError bmp_fill(Bitmap *bmp, uint8_t r, uint8_t g, uint8_t b) {
     }
 
     return BMP_OK;
+}
+
+Bitmap *bmp_x_create(int32_t width, int32_t height, uint16_t bit_count) {
+    Bitmap *bmp = (Bitmap *) malloc(sizeof(Bitmap));
+
+    if (bmp == NULL) { return NULL; }
+
+    if (bmp_init(bmp, width, height, bit_count) != BMP_OK) {
+        free(bmp);
+        return NULL;
+    }
+
+    return bmp;
 }
